@@ -10,33 +10,102 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AllocationsRouteImport } from './routes/allocations'
+import { Route as FraudMonitorRouteImport } from './routes/fraud-monitor'
+import { Route as MyBidsRouteImport } from './routes/my-bids'
+import { Route as TendersIndexRouteImport } from './routes/tenders.index'
+import { Route as TendersTenderIdRouteImport } from './routes/tenders.$tenderId'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AllocationsRoute = AllocationsRouteImport.update({
+  id: '/allocations',
+  path: '/allocations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const FraudMonitorRoute = FraudMonitorRouteImport.update({
+  id: '/fraud-monitor',
+  path: '/fraud-monitor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const MyBidsRoute = MyBidsRouteImport.update({
+  id: '/my-bids',
+  path: '/my-bids',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TendersIndexRoute = TendersIndexRouteImport.update({
+  id: '/tenders/',
+  path: '/tenders/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TendersTenderIdRoute = TendersTenderIdRouteImport.update({
+  id: '/tenders/$tenderId',
+  path: '/tenders/$tenderId',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/allocations': typeof AllocationsRoute
+  '/fraud-monitor': typeof FraudMonitorRoute
+  '/my-bids': typeof MyBidsRoute
+  '/tenders/$tenderId': typeof TendersTenderIdRoute
+  '/tenders/': typeof TendersIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/allocations': typeof AllocationsRoute
+  '/fraud-monitor': typeof FraudMonitorRoute
+  '/my-bids': typeof MyBidsRoute
+  '/tenders/$tenderId': typeof TendersTenderIdRoute
+  '/tenders': typeof TendersIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/allocations': typeof AllocationsRoute
+  '/fraud-monitor': typeof FraudMonitorRoute
+  '/my-bids': typeof MyBidsRoute
+  '/tenders/$tenderId': typeof TendersTenderIdRoute
+  '/tenders/': typeof TendersIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/allocations'
+    | '/fraud-monitor'
+    | '/my-bids'
+    | '/tenders/$tenderId'
+    | '/tenders/'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to:
+    | '/'
+    | '/allocations'
+    | '/fraud-monitor'
+    | '/my-bids'
+    | '/tenders/$tenderId'
+    | '/tenders'
+  id:
+    | '__root__'
+    | '/'
+    | '/allocations'
+    | '/fraud-monitor'
+    | '/my-bids'
+    | '/tenders/$tenderId'
+    | '/tenders/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AllocationsRoute: typeof AllocationsRoute
+  FraudMonitorRoute: typeof FraudMonitorRoute
+  MyBidsRoute: typeof MyBidsRoute
+  TendersTenderIdRoute: typeof TendersTenderIdRoute
+  TendersIndexRoute: typeof TendersIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,22 +117,52 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/allocations': {
+      id: '/allocations'
+      path: '/allocations'
+      fullPath: '/allocations'
+      preLoaderRoute: typeof AllocationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/fraud-monitor': {
+      id: '/fraud-monitor'
+      path: '/fraud-monitor'
+      fullPath: '/fraud-monitor'
+      preLoaderRoute: typeof FraudMonitorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/my-bids': {
+      id: '/my-bids'
+      path: '/my-bids'
+      fullPath: '/my-bids'
+      preLoaderRoute: typeof MyBidsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenders/': {
+      id: '/tenders/'
+      path: '/tenders'
+      fullPath: '/tenders/'
+      preLoaderRoute: typeof TendersIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/tenders/$tenderId': {
+      id: '/tenders/$tenderId'
+      path: '/tenders/$tenderId'
+      fullPath: '/tenders/$tenderId'
+      preLoaderRoute: typeof TendersTenderIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AllocationsRoute: AllocationsRoute,
+  FraudMonitorRoute: FraudMonitorRoute,
+  MyBidsRoute: MyBidsRoute,
+  TendersTenderIdRoute: TendersTenderIdRoute,
+  TendersIndexRoute: TendersIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
