@@ -2,9 +2,9 @@ import { randomHex, request } from "./api";
 import type { AllocationScore, Bid, OnChainProof, PipelineStage } from "./types";
 
 export const ALLOCATION_WEIGHTS = {
-  fraudRisk: 0.3,
   price: 0.4,
   trackRecord: 0.3,
+  fraudRisk: 0.3,
 } as const;
 
 export const pipelineStages: PipelineStage[] = [
@@ -37,32 +37,39 @@ export const pipelineStages: PipelineStage[] = [
 
 export const blockchainService = {
   async simulateAllocation(bids: Bid[]): Promise<AllocationScore[]> {
-    return request("/chain/allocate", () => {
-      if (bids.length === 0) return [];
-      const amounts = bids.map((b) => b.bidAmount);
-      const min = Math.min(...amounts);
-      const max = Math.max(...amounts);
-      const span = max - min || 1;
-      return bids
-        .map((bid) => {
-          const fraudRiskScore = 100 - bid.aiSimilarityScore;
-          const priceScore = Math.round(100 - ((bid.bidAmount - min) / span) * 100);
-          const trackRecordScore = bid.trackRecord;
-          const weightedTotal =
-            fraudRiskScore * ALLOCATION_WEIGHTS.fraudRisk +
-            priceScore * ALLOCATION_WEIGHTS.price +
-            trackRecordScore * ALLOCATION_WEIGHTS.trackRecord;
-          return {
-            bidId: bid.id,
-            bidderName: bid.bidderName,
-            fraudRiskScore,
-            priceScore,
-            trackRecordScore,
-            weightedTotal: Math.round(weightedTotal * 10) / 10,
-          };
-        })
-        .sort((a, b) => b.weightedTotal - a.weightedTotal);
-    });
+    return request(
+      "/allocations/compute-winner",
+      () => {
+        if (bids.length === 0) return [];
+        const amounts = bids.map((b) => b.bidAmount);
+        const min = Math.min(...amounts);
+        const max = Math.max(...amounts);
+        const span = max - min || 1;
+        return bids
+          .map((bid) => {
+            const fraudRiskScore = 100 - bid.aiSimilarityScore;
+            const priceScore = Math.round(100 - ((bid.bidAmount - min) / span) * 100);
+            const trackRecordScore = bid.trackRecord;
+            const weightedTotal =
+              priceScore * ALLOCATION_WEIGHTS.price +
+              trackRecordScore * ALLOCATION_WEIGHTS.trackRecord +
+              fraudRiskScore * ALLOCATION_WEIGHTS.fraudRisk;
+            return {
+              bidId: bid.id,
+              bidderName: bid.bidderName,
+              fraudRiskScore: bid.aiSimilarityScore || 0,
+              priceScore,
+              trackRecordScore,
+              weightedTotal: Math.round(weightedTotal * 10) / 10,
+            };
+          })
+          .sort((a, b) => b.weightedTotal - a.weightedTotal);
+      },
+      {
+        method: "POST",
+        body: JSON.stringify({ bids }),
+      }
+    );
   },
 
   async verifyOnChainProof(tenderId: string): Promise<OnChainProof> {
@@ -77,19 +84,33 @@ export const blockchainService = {
   },
 
   async pinToIpfs(fileName: string): Promise<{ cid: string; fileName: string; sizeKb: number }> {
-    return request("/chain/ipfs", () => ({
-      cid: `bafybei${randomHex(26)}`,
-      fileName,
-      sizeKb: 240 + Math.floor(Math.random() * 3800),
-    }));
+    return request(
+      "/chain/ipfs",
+      () => ({
+        cid: `bafybei${randomHex(26)}`,
+        fileName,
+        sizeKb: 240 + Math.floor(Math.random() * 3800),
+      }),
+      {
+        method: "POST",
+        body: JSON.stringify({ fileName }),
+      }
+    );
   },
 
   async releasePayout(tenderId: string, vendor: string) {
-    return request("/chain/payout", () => ({
-      tenderId,
-      vendor,
-      txHash: `0x${randomHex(64)}`,
-      milestone: "Mobilisation advance (15%)",
-    }));
+    return request(
+      "/chain/payout",
+      () => ({
+        tenderId,
+        vendor,
+        txHash: `0x${randomHex(64)}`,
+        milestone: "Mobilisation advance (15%)",
+      }),
+      {
+        method: "POST",
+        body: JSON.stringify({ tenderId, vendor }),
+      }
+    );
   },
 };

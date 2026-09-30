@@ -1,0 +1,92 @@
+[2026-09-30T02:38:58.545Z] =======================================================================
+[2026-09-30T02:38:58.547Z] TENDER GUARD AI PHASE 2 PRODUCTION VERIFICATION SUITE (WEB3 & SEMANTIC AI)
+[2026-09-30T02:38:58.547Z] =======================================================================
+
+[2026-09-30T02:38:58.547Z] --> Test 1: GET /health
+[2026-09-30T02:38:58.613Z] Status: 200
+[2026-09-30T02:38:58.613Z] Payload: {
+  "status": "ok",
+  "timestamp": "2026-09-30T02:38:58.599Z",
+  "service": "tender-guard-ai-backend",
+  "uptimeSeconds": 8.7494157
+}
+
+[2026-09-30T02:38:58.613Z] --> Test 2: POST /api/tenders/TND-701/bids (Semantic Vector AI Engine & Commitment Hash)
+[2026-09-30T02:38:58.649Z] Status: 201
+[2026-09-30T02:38:58.649Z] Result: {
+  "bid": {
+    "id": "BID-9052",
+    "tenderId": "TND-701",
+    "bidderAddress": "0x71C765...9B32",
+    "bidderName": "Aegis Aerodyne Systems",
+    "bidAmount": 4150000,
+    "encryptedProposalHash": "0xbc738bccc1009ce3927dd76038486366b51d5da665a5ae062e9a2ec59961add5",
+    "submissionTime": "2026-09-30T02:38:58.645Z",
+    "aiSimilarityScore": 100,
+    "flaggedForFraud": true,
+    "status": "Sealed",
+    "trackRecord": 85,
+    "ipfsCid": "ipfs://bafybeiee3bb22f9f06d7b402e0db2841f2ac93bid_",
+    "proposalText": "High-speed autonomous interception drones with cryptographic telemetry mesh communications protocol.",
+    "salt": "aupcx7f5c2"
+  },
+  "riskAnalysis": {
+    "riskScore": 57,
+    "similarityScore": 100,
+    "walletClusterRisk": 10,
+    "flaggedForFraud": true,
+    "alertsGenerated": 1
+  }
+}
+
+[2026-09-30T02:38:58.649Z] --> Test 3: POST /api/allocations/compute-winner (Weighted Allocation & IPFS CID)
+[2026-09-30T02:38:58.655Z] Status: 200
+[2026-09-30T02:38:58.655Z] Winner Allocation Output: [
+  {
+    "bidId": "BID-9013",
+    "bidderName": "Vanta Infra Works",
+    "fraudRiskScore": 18,
+    "priceScore": 100,
+    "trackRecordScore": 94,
+    "weightedTotal": 92.8
+  },
+  {
+    "bidId": "BID-9012",
+    "bidderName": "Aegis Aerodyne Systems",
+    "fraudRiskScore": 86,
+    "priceScore": 0,
+    "trackRecordScore": 89,
+    "weightedTotal": 30.9
+  },
+  {
+    "bidId": "BID-9011",
+    "bidderName": "Pinnacle Crypto Defence LLP",
+    "fraudRiskScore": 88,
+    "priceScore": 15,
+    "trackRecordScore": 54,
+    "weightedTotal": 25.8
+  },
+  {
+    "bidId": "BID-9052",
+    "bidderName": "Aegis Aerodyne Systems",
+    "fraudRiskScore": 100,
+    "priceScore": 0,
+    "trackRecordScore": 85,
+    "weightedTotal": 25.5
+  }
+]
+
+[2026-09-30T02:38:58.655Z] --> Test 4: GET /api/chain/proof/TND-701 (Verifiable ZK Proof & IPFS Audit Log)
+[2026-09-30T02:38:58.684Z] Status: 200
+[2026-09-30T02:38:58.684Z] Audit Proof Output: {
+  "txHash": "0x9494a5a819bec9913372dbfb6f00725e68e5278a2e1a8d5bca52b7ddc14a51c8",
+  "ipfsHash": "ipfs://bafybei5da87790f6428b5c27ebecf41e8abfbeaudi",
+  "zkProofStatus": "Verified",
+  "blockNumber": 21413477,
+  "gasUsed": 148287,
+  "network": "Local Hardhat / Sepolia Testnet"
+}
+
+[2026-09-30T02:38:58.684Z] =======================================================================
+[2026-09-30T02:38:58.684Z] PHASE 2 PRODUCTION VERIFICATION COMPLETED SUCCESSFULLY
+[2026-09-30T02:38:58.684Z] =======================================================================

@@ -1,0 +1,92 @@
+(node:5264) [MODULE_TYPELESS_PACKAGE_JSON] Warning: Module type of file:///C:/Users/HP/.gemini/antigravity/scratch/tender-guard-ai/server/verify-backend.js is not specified and it doesn't parse as CommonJS.
+Reparsing as ES module because module syntax was detected. This incurs a performance overhead.
+To eliminate this warning, add "type": "module" to \\?\C:\Users\HP\.gemini\antigravity\scratch\tender-guard-ai\server\package.json.
+(Use `node --trace-warnings ...` to show where the warning was created)
+====================================================
+TENDER GUARD AI BACKEND AUTONOMOUS VERIFICATION SUITE
+====================================================
+
+--> Test 1: Verification of GET /health
+HTTP Status: 200
+Payload: {
+  "status": "ok",
+  "timestamp": "2026-08-10T16:16:55.510Z",
+  "service": "tender-guard-ai-backend",
+  "uptimeSeconds": 20.8951723
+}
+
+--> Test 2: Verification of GET /api/tenders
+HTTP Status: 200
+Total Tenders fetched: 3
+
+--> Test 3: Verification of POST /api/tenders/TND-701/bids (AI Fraud Engine TF-IDF & Wallet Graph)
+HTTP Status: 201
+Risk Output: {
+  "bid": {
+    "id": "BID-9471",
+    "tenderId": "TND-701",
+    "bidderAddress": "0x71C765...9B32",
+    "bidderName": "Pinnacle Crypto Defence LLP",
+    "bidAmount": 4120000,
+    "encryptedProposalHash": "0x6c0f8e82bb4008fbe3ad4398f7accfc9aae4d4f33502a2cc8be0622552f673d5",
+    "submissionTime": "2026-08-10T16:16:55.566Z",
+    "aiSimilarityScore": 100,
+    "flaggedForFraud": true,
+    "status": "Sealed",
+    "trackRecord": 85,
+    "ipfsCid": "bafybeif6b5a8842c227892458827dfbd",
+    "proposalText": "High-speed autonomous interception drones with cryptographic telemetry mesh communications protocol."
+  },
+  "riskAnalysis": {
+    "riskScore": 45,
+    "similarityScore": 100,
+    "walletClusterRisk": 0,
+    "flaggedForFraud": true,
+    "alertsGenerated": 1
+  }
+}
+
+--> Test 4: Verification of POST /api/allocations/compute-winner (Weighted Formula: 40% Price + 30% Track Record + 30% Low Risk)
+HTTP Status: 200
+Allocation Winner Output: [
+  {
+    "bidId": "BID-9013",
+    "bidderName": "Vanta Infra Works",
+    "fraudRiskScore": 18,
+    "priceScore": 100,
+    "trackRecordScore": 94,
+    "weightedTotal": 92.8
+  },
+  {
+    "bidId": "BID-9471",
+    "bidderName": "Pinnacle Crypto Defence LLP",
+    "fraudRiskScore": 100,
+    "priceScore": 15,
+    "trackRecordScore": 85,
+    "weightedTotal": 31.5
+  },
+  {
+    "bidId": "BID-9012",
+    "bidderName": "Aegis Aerodyne Systems",
+    "fraudRiskScore": 86,
+    "priceScore": 0,
+    "trackRecordScore": 89,
+    "weightedTotal": 30.9
+  },
+  {
+    "bidId": "BID-9011",
+    "bidderName": "Pinnacle Crypto Defence LLP",
+    "fraudRiskScore": 88,
+    "priceScore": 15,
+    "trackRecordScore": 54,
+    "weightedTotal": 25.8
+  }
+]
+
+--> Test 5: Verification of GET /api/fraud/alerts
+HTTP Status: 200
+Total Fraud Alerts in system: 4
+
+====================================================
+ALL AUTONOMOUS VERIFICATION TESTS COMPLETED SUCCESSFULLY
+====================================================

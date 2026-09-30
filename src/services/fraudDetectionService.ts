@@ -85,15 +85,22 @@ export const fraudDetectionService = {
     return request("/fraud/alerts", () => [...store.alerts]);
   },
   async listAlertsForTender(tenderId: string): Promise<FraudAlert[]> {
-    return request(`/fraud/alerts?tenderId=${tenderId}`, () =>
+    return request(`/fraud/alerts?tenderId=${encodeURIComponent(tenderId)}`, () =>
       store.alerts.filter((a) => a.tenderId === tenderId),
     );
   },
   async updateAlertStatus(id: string, status: AlertStatus): Promise<FraudAlert> {
-    return request(`/fraud/alerts/${id}`, () => {
-      store.alerts = store.alerts.map((a) => (a.id === id ? { ...a, status } : a));
-      return store.alerts.find((a) => a.id === id)!;
-    });
+    return request(
+      `/fraud/alerts/${id}`,
+      () => {
+        store.alerts = store.alerts.map((a) => (a.id === id ? { ...a, status } : a));
+        return store.alerts.find((a) => a.id === id)!;
+      },
+      {
+        method: "PATCH",
+        body: JSON.stringify({ status }),
+      }
+    );
   },
   async getCollusionClusters(): Promise<CollusionCluster[]> {
     return request("/fraud/collusion", () => clusters);
@@ -105,13 +112,17 @@ export const fraudDetectionService = {
     return request("/fraud/ghost-vendors", () => ghostVendors);
   },
   async getRiskTrend(seed = 0): Promise<RiskTrendPoint[]> {
-    return request("/fraud/trend", () => trend(seed));
+    return request(`/fraud/trend?seed=${seed}`, () => trend(seed));
   },
   async runScan(): Promise<{ scanned: number; newFlags: number; durationMs: number }> {
-    return request("/fraud/scan", () => ({
-      scanned: 62 + Math.floor(Math.random() * 40),
-      newFlags: Math.floor(Math.random() * 4),
-      durationMs: 800 + Math.floor(Math.random() * 1500),
-    }));
+    return request(
+      "/fraud/scan",
+      () => ({
+        scanned: 62 + Math.floor(Math.random() * 40),
+        newFlags: Math.floor(Math.random() * 4),
+        durationMs: 800 + Math.floor(Math.random() * 1500),
+      }),
+      { method: "POST" }
+    );
   },
 };

@@ -1,17 +1,38 @@
 /**
- * Single seam between the UI and the backend.
+ * Single seam between the UI and the backend server.
  *
- * Every service module goes through `request()`. To move from mock data to a
- * real backend, replace the body of `request()` with a `fetch(BASE_URL + path)`
- * call — no component or hook needs to change.
+ * Dispatches real HTTP requests to VITE_API_BASE_URL (http://localhost:5000/api).
  */
-export const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"] ?? "/api";
+export const API_BASE_URL = import.meta.env["VITE_API_BASE_URL"] ?? "http://localhost:5000/api";
 
-const NETWORK_LATENCY_MS = 420;
+export async function request<T>(
+  path: string,
+  fallbackResolver?: () => T | Promise<T>,
+  options: RequestInit = {}
+): Promise<T> {
+  const url = `${API_BASE_URL}${path.startsWith("/") ? path : "/" + path}`;
+  try {
+    const res = await fetch(url, {
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+      ...options,
+    });
 
-export async function request<T>(_path: string, resolver: () => T | Promise<T>): Promise<T> {
-  await new Promise((resolve) => setTimeout(resolve, NETWORK_LATENCY_MS));
-  return resolver();
+    if (!res.ok) {
+      throw new Error(`API Request failed with status ${res.status}: ${res.statusText}`);
+    }
+
+    const data = await res.json();
+    return data as T;
+  } catch (error) {
+    console.warn(`[API] Remote call to ${url} failed or unreachable, using fallback resolver:`, error);
+    if (fallbackResolver) {
+      return fallbackResolver();
+    }
+    throw error;
+  }
 }
 
 export function randomHex(length: number): string {
